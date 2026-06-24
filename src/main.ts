@@ -32,9 +32,15 @@ async function bootstrap() {
   await inventoryService.initializeInventory();
 
   const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
+
+  const os = await import('os');
+  const localIP = Object.values(os.networkInterfaces())
+    .flat()
+    .find((iface) => iface?.family === 'IPv4' && !iface.internal)?.address ?? 'your-local-ip';
 
   console.log(`\n🩸 Blood Donation API: http://localhost:${port}/api`);
+  console.log(`🌐 Network Access:     http://${localIP}:${port}/api`);
   console.log(`🔐 Auth: POST /api/auth/register | POST /api/auth/login`);
   console.log(`📊 Dashboard: GET /api/dashboard/stats  (Admin JWT required)`);
 }
